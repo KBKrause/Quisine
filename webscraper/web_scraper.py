@@ -4,18 +4,12 @@ from recipe import Recipe
 
 class RecipeScraper:
 
-	def __init__(self, websites):
-		
-		# Get the list of website to look through
-		self.websites = websites
+	def __init__(self):
 		
 		self.ingredients = []
 		self.recipes = []
 		
-		# Get raw HTML from requested website
-		self.__requestHTML()
-		
-	def __requestHTML(self):
+	def getRecipes(self):
 	
 		session = requests.Session()
 		session.max_redirects = 60
@@ -42,14 +36,8 @@ class RecipeScraper:
 				except Exception as e:
 					continue
 					
-		for r in self.recipes:
-			print("prep: ", r.getPrep(), "\n")
-			print("desciption: ", r.getDescription(), "\n")
-			print("image: ", r.getImage(), "\n")
-			print("ingredients: ", r.getIngredients(), "\n")
-			print("calories: ", r.getCalories(), "\n")
-			print("url: ", r.getURL(), "\n")
-			
+		print("Completed parsing...")
+		return self.recipes
 		
 	def parseContent(self, content, link):
 	
@@ -61,7 +49,10 @@ class RecipeScraper:
 		
 		# Find the ingredients of the recipe
 		for span in currentPageInfo.find_all('span',itemprop="ingredients"):
-			self.ingredients.append(span.string)
+		
+			if(span.string not in self.ingredients):
+				self.ingredients.append(span.string)
+			
 				
 		description = currentPageInfo.find("meta",  property="og:description")
 		
@@ -79,10 +70,4 @@ class RecipeScraper:
 			
 		self.recipes.append(new_recipe)
 		
-		return self.recipes
-		
-	
-
-if __name__ == "__main__":
-
-	RecipeScraper(["test", "test1"])
+		self.ingredients = []

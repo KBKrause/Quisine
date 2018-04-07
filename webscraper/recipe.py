@@ -46,9 +46,6 @@ class Recipe:
 	def getPrep(self):
 		return self.prep
 		
-		
-		
-		
 	def returnJSON(self):
 	
 		recipe = {"url": self.url,
