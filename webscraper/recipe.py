@@ -27,6 +27,28 @@ class Recipe:
 	def setPrep(self, prep):
 		self.prep = prep
 		
+		
+	def getURL(self):
+		return self.url
+		
+	def getIngredients(self):
+		return self.ingredients
+		
+	def getDescription(self):
+		return self.description
+		
+	def getCalories(self):
+		return self.calories
+		
+	def getImage(self):
+		return self.image
+		
+	def getPrep(self):
+		return self.prep
+		
+		
+		
+		
 	def returnJSON(self):
 	
 		recipe = {"url": self.url,

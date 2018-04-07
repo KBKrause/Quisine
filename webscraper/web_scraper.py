@@ -9,11 +9,11 @@ class RecipeScraper:
 		# Get the list of website to look through
 		self.websites = websites
 		
-		# Get raw HTML from requested website
-		self.__requestHTML()
-		
 		self.ingredients = []
 		self.recipes = []
+		
+		# Get raw HTML from requested website
+		self.__requestHTML()
 		
 	def __requestHTML(self):
 	
@@ -21,7 +21,7 @@ class RecipeScraper:
 		session.max_redirects = 60
 	
 		# Get the content and response of main web page
-		response = session.get("https://www.allrecipes.com/?page=5")
+		response = session.get("https://www.allrecipes.com/")
 		
 		# Get the HTML content of main page
 		soup = BeautifulSoup(response.content, "html.parser")
@@ -41,37 +41,45 @@ class RecipeScraper:
 					
 				except Exception as e:
 					continue
+					
+		for r in self.recipes:
+			print("prep: ", r.getPrep(), "\n")
+			print("desciption: ", r.getDescription(), "\n")
+			print("image: ", r.getImage(), "\n")
+			print("ingredients: ", r.getIngredients(), "\n")
+			print("calories: ", r.getCalories(), "\n")
+			print("url: ", r.getURL(), "\n")
+			
 		
 	def parseContent(self, content, link):
 	
 		# Get the content of the current page
 		currentPageInfo = BeautifulSoup(content, "html.parser")
-		
+		print("Parsing: ", link)
 		new_recipe = Recipe()
 		new_recipe.setURL(link)
 		
 		# Find the ingredients of the recipe
 		for span in currentPageInfo.find_all('span',itemprop="ingredients"):
-			self.ingredients.append(span)
+			self.ingredients.append(span.string)
 				
 		description = currentPageInfo.find("meta",  property="og:description")
 		
-		new_recipe.setDescription(description)
+		new_recipe.setDescription(description["content"])
 				
 		new_recipe.setIngredients(self.ingredients)
 		
 		for time in currentPageInfo.find_all('span', {'class' : 'prepTime__item--time'}):
-			new_recipe.setPrep(time)
+			new_recipe.setPrep(time.string)
 			
 		for calories in currentPageInfo.find_all('span', itemprop="calories"):
-			new_recipe.setCalories(calories)
+			new_recipe.setCalories(calories.string.strip(";"))
 			
-		for image in currentPageInfo.find_all("meta", property="og:image"):
-			new_recipe.setImage(image)
+		new_recipe.setImage(currentPageInfo.find_all("meta", property="og:image")[0]["content"])
 			
-		self.recipies.append(new_recipe)
+		self.recipes.append(new_recipe)
 		
-		return self.recipies
+		return self.recipes
 		
 	
 
