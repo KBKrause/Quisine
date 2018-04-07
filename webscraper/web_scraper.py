@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup, SoupStrainer
 import requests
+from recipe import Recipe
 
 class RecipeScraper:
 
@@ -8,11 +9,11 @@ class RecipeScraper:
 		# Get the list of website to look through
 		self.websites = websites
 		
-		# Storage space for HTML code
-		self.RawHTML = []
-		
 		# Get raw HTML from requested website
 		self.__requestHTML()
+		
+		self.ingredients = []
+		self.recipes = []
 		
 	def __requestHTML(self):
 	
@@ -33,35 +34,46 @@ class RecipeScraper:
 				
 				# Request information from website
 				response1 = session.get(link["href"])
-				
+
 				# Try to parse content, if not continue
 				try:
-					self.parseContent(response1.content)
+					self.parseContent(response1.content, link["href"])
 					
 				except Exception as e:
 					continue
 		
-	def parseContent(self, content):
+	def parseContent(self, content, link):
 	
 		# Get the content of the current page
 		currentPageInfo = BeautifulSoup(content, "html.parser")
 		
-		# Find the ingredients of the recipe
-		#for span in currentPageInfo.find_all('span',itemprop="ingredients"):
-		#	print(span.string)
+		new_recipe = Recipe()
+		new_recipe.setURL(link)
 		
-		# Find the prep time for the recipe 
-		#for time in currentPageInfo.find_all('span', {'class' : 'prepTime__item--time'}):
-		#	print(time.string)
+		# Find the ingredients of the recipe
+		for span in currentPageInfo.find_all('span',itemprop="ingredients"):
+			self.ingredients.append(span)
+				
+		description = currentPageInfo.find("meta",  property="og:description")
+		
+		new_recipe.setDescription(description)
+				
+		new_recipe.setIngredients(self.ingredients)
+		
+		for time in currentPageInfo.find_all('span', {'class' : 'prepTime__item--time'}):
+			new_recipe.setPrep(time)
 			
-		#for calories in currentPageInfo.find_all('span', itemprop="calories"):
-		#	print(calories.string.strip(";"))
+		for calories in currentPageInfo.find_all('span', itemprop="calories"):
+			new_recipe.setCalories(calories)
 			
 		for image in currentPageInfo.find_all("meta", property="og:image"):
-			print(image["content"])
+			new_recipe.setImage(image)
+			
+		self.recipies.append(new_recipe)
 		
+		return self.recipies
 		
-		
+	
 
 if __name__ == "__main__":
 
