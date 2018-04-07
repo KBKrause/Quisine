@@ -17,3 +17,5 @@ class Recipe:
 				  "calories": self.calories,
 				  "image": self.image,
 				  "prep": self.prep}
+				  
+		return recipe
