@@ -1,0 +1,34 @@
+{
+
+	“recipes” : {	
+					“0” : {
+							“ingredients” : [“cheese”, “milk”, “rice”, “chocolate”],
+							“prep” : 30,
+							“url”: “https://allrecipes.com/falafel”,
+							“calories” : 460,
+							“image” : “https://image.jpg”
+							“description” : “tasty”
+						   },
+
+					“1” : {
+							“ingredients” : [“banana”, “milk”, “flour”, “cucumber”],
+							“prep” : 30,
+							“url”: “https://allrecipes.com/bananacucumber”,
+							“calories” : 4630,
+							“image” : “https://image1.jpg”
+							“description” : “yucky”
+						   }
+				},
+
+	“ingredients” : {
+
+						“cheese” : [“0”],
+						“milk” : [“0”, “1”],
+						“rice” : [“0”],
+						“chocolate : [“0”],
+						“banana” : [“1”],
+						“flour” : [“1”],
+						“cucumber” : [“1”]
+					}
+
+}
